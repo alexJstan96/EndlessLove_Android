@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>ASSIEME - Android AR Viewer</title>
+
+<!-- Model Viewer -->
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
+<style>
+body {
+margin: 0;
+background: #000;
+display: flex;
+flex-direction: column;
+align-items: center;
+color: white;
+font-family: sans-serif;
+}
+
+model-viewer {
+width: 100vw;
+height: 70vh;
+}
+
+/* Pulsante AR grande (Scene Viewer) */
+model-viewer::part(default-ar-button) {
+width: 90px;
+height: 90px;
+border-radius: 50%;
+background: white;
+color: black;
+font-size: 1.8rem;
+}
+
+#animSelect {
+margin-top: 10px;
+padding: 10px;
+font-size: 1rem;
+border-radius: 10px;
+}
+
+#animBtn {
+margin: 10px;
+padding: 12px 24px;
+font-size: 1.1rem;
+border-radius: 12px;
+border: none;
+cursor: pointer;
+background: #444;
+color: white;
+}
+
+.controls-section {
+display: flex;
+align-items: center;
+margin: 8px 0;
+width: 95vw;
+}
+
+.controls-section h3 {
+margin-right: 12px;
+font-size: 1.1rem;
+min-width: 150px;
+}
+
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+}
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: white;
+    min-width: 70px;
+ }
+
+.green { background: green; }
+.blue { background: blue; }
+.yellow { background: yellow; color: gray;}
+.lightgray { background: lightgray; color: black; }
+.darkgray { background: dimgray; }
+.red { background: red; }
+.orange { background: orange; color: white;}
+</style>
+</head>
+
+<body>
+
+<!-- MODEL VIEWER ANDROID -->
+<model-viewer
+id="viewer"
+src="linea lunga_V4.glb"
+ar
+ar-modes="scene-viewer"
+camera-controls
+auto-rotate
+shadow-intensity="0"
+exposure="0.6"
+alt="ASSIEME 3D Model">
+
+</model-viewer>
+
+<!-- Selezione animazione -->
+<select id="animSelect" onchange="selectAnimation()">
+<option disabled selected>Seleziona animazione</option>
+</select>
+
+<!-- Play / Pause -->
+<button id="animBtn" onclick="toggleAnimation()">
+▶ Play animation
+</button>
+
+<!-- STRUCTURE COLOR -->
+<div class="controls-section">
+<h3>Structure Color</h3>
+<div class="controls">
+<button class="color green" onclick="changeColor(0, [0, 0.1, 0, 1])">Verde</button>
+<button class="color blue" onclick="changeColor(0, [0, 0, 0.18, 1])">Blu</button>
+<button class="color orange" onclick="changeColor(0, [1, 0.12, 0, 1])">Arancio</button>
+<button class="color lightgray" onclick="changeColor(0, [0.55, 0.55, 0.55, 1])">Grigio chiaro</button>
+<button class="color darkgray" onclick="changeColor(0, [0.25, 0.25, 0.25, 1])">Grigio scuro</button>
+<button class="color red" onclick="changeColor(0, [0.22, 0, 0, 1])">Rosso</button>
+</div>
+</div>
+
+<!-- MOBILE PARTS COLOR -->
+<div class="controls-section">
+<h3>Mobile Parts Color</h3>
+<div class="controls">
+<button class="color green" onclick="changeColor(2, [0, 0.1, 0, 1])">Verde</button>
+<button class="color blue" onclick="changeColor(2, [0, 0, 1, 1])">Blu</button>
+<button class="color yellow" onclick="changeColor(2, [1, 1, 0, 1])">Giallo</button>
+<button class="color lightgray" onclick="changeColor(2, [0.55, 0.55, 0.55, 1])">Grigio chiaro</button>
+<button class="color darkgray" onclick="changeColor(2, [0.33, 0.33, 0.33, 1])">Grigio scuro</button>
+<button class="color red" onclick="changeColor(2, [1, 0, 0, 1])">Rosso</button>
+</div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+const modelViewer = document.querySelector('#viewer');
+const animBtn = document.getElementById('animBtn');
+const animSelect = document.getElementById('animSelect');
+
+modelViewer.addEventListener('load', () => {
+const animations = modelViewer.availableAnimations || [];
+
+animations.forEach(anim => {
+const opt = document.createElement('option');
+opt.value = anim;
+opt.textContent = anim;
+animSelect.appendChild(opt);
+});
+
+if (animations.length > 0) {
+modelViewer.animationName = animations[0];
+}
+});
+
+function toggleAnimation() {
+if (modelViewer.paused) {
+modelViewer.play();
+animBtn.textContent = "⏸ Pause animation";
+} else {
+modelViewer.pause();
+animBtn.textContent = "▶ Play animation";
+}
+}
+
+function selectAnimation() {
+modelViewer.pause();
+modelViewer.animationName = animSelect.value;
+modelViewer.play();
+animBtn.textContent = "⏸ Pause animation";
+}
+
+function changeColor(materialIndex, rgba) {
+const mat = modelViewer.model.materials[materialIndex];
+if (mat && mat.pbrMetallicRoughness) {
+mat.pbrMetallicRoughness.setBaseColorFactor(rgba);
+}
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
